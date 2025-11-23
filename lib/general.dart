@@ -128,7 +128,7 @@ class GeneralPage extends StatelessWidget {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: _validateGroupAddress,
-                            onSaved: (v) => timeAddress = (v ?? '').trim(),
+                            onChanged: (v) => timeAddress = v.trim(),
                           ),
                           const SizedBox(height: 8),
                           TextFormField(
@@ -139,7 +139,7 @@ class GeneralPage extends StatelessWidget {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: _validateGroupAddress,
-                            onSaved: (v) => dateAddress = (v ?? '').trim(),
+                            onChanged: (v) => dateAddress = v.trim(),
                           ),
                         ],
                         if (azElOption == 'BusAzEl') ...[
@@ -151,7 +151,7 @@ class GeneralPage extends StatelessWidget {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: _validateGroupAddress,
-                            onSaved: (v) => azimuthAddress = v ?? '',
+                            onChanged: (v) => azimuthAddress = v.trim(),
                           ),
                           DropdownButtonFormField<String>(
                             value: azimuthDPT,
@@ -175,10 +175,6 @@ class GeneralPage extends StatelessWidget {
                             onChanged: (v) {
                               if (v != null) {
                                 onAzimuthDPTChanged(v);
-                              }
-                            },
-                            onSaved: (v) {
-                              if (v != null) {
                                 azimuthDPT = v;
                               }
                             },
@@ -191,7 +187,7 @@ class GeneralPage extends StatelessWidget {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: _validateGroupAddress,
-                            onSaved: (v) => elevationAddress = v ?? '',
+                            onChanged: (v) => elevationAddress = v.trim(),
                           ),
                           DropdownButtonFormField<String>(
                             value: elevationDPT,
@@ -215,10 +211,6 @@ class GeneralPage extends StatelessWidget {
                             onChanged: (v) {
                               if (v != null) {
                                 onElevationDPTChanged(v);
-                              }
-                            },
-                            onSaved: (v) {
-                              if (v != null) {
                                 elevationDPT = v;
                               }
                             },
@@ -226,51 +218,51 @@ class GeneralPage extends StatelessWidget {
                         ],
                         const SizedBox(height: 8),
                         TypeAheadFormField<String>(
-                            textFieldConfiguration: TextFieldConfiguration(
-                              controller: azElTimezoneController,
-                              decoration: const InputDecoration(
-                                labelText: 'Zeitzone',
-                              ),
+                          textFieldConfiguration: TextFieldConfiguration(
+                            controller: azElTimezoneController,
+                            decoration: const InputDecoration(
+                              labelText: 'Zeitzone',
                             ),
-                            suggestionsCallback: (pattern) {
-                              final lowerPattern = pattern.toLowerCase();
-                              if (lowerPattern.isEmpty) {
-                                return kIanaTimeZones.take(20);
-                              }
-                              return kIanaTimeZones
-                                  .where(
-                                    (zone) => zone.toLowerCase().contains(
-                                      lowerPattern,
-                                    ),
-                                  )
-                                  .take(20);
-                            },
-                            itemBuilder: (context, suggestion) =>
-                                ListTile(title: Text(suggestion)),
-                            noItemsFoundBuilder: (context) => const SizedBox(
-                              height: 48,
-                              child: Center(
-                                child: Text('Keine Zeitzone gefunden'),
-                              ),
-                            ),
-                            onSuggestionSelected: (suggestion) {
-                              azElTimezoneController.text = suggestion;
-                              onAzElTimezoneChanged(suggestion);
-                            },
-                            validator: (value) {
-                              final trimmed = value?.trim() ?? '';
-                              if (!kIanaTimeZones.contains(trimmed)) {
-                                return 'Bitte eine gültige Zeitzone auswählen';
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              final trimmed = value?.trim() ?? '';
-                              if (kIanaTimeZones.contains(trimmed)) {
-                                onAzElTimezoneChanged(trimmed);
-                              }
-                            },
                           ),
+                          suggestionsCallback: (pattern) {
+                            final lowerPattern = pattern.toLowerCase();
+                            if (lowerPattern.isEmpty) {
+                              return kIanaTimeZones.take(20);
+                            }
+                            return kIanaTimeZones
+                                .where(
+                                  (zone) => zone.toLowerCase().contains(
+                                    lowerPattern,
+                                  ),
+                                )
+                                .take(20);
+                          },
+                          itemBuilder: (context, suggestion) =>
+                              ListTile(title: Text(suggestion)),
+                          noItemsFoundBuilder: (context) => const SizedBox(
+                            height: 48,
+                            child: Center(
+                              child: Text('Keine Zeitzone gefunden'),
+                            ),
+                          ),
+                          onSuggestionSelected: (suggestion) {
+                            azElTimezoneController.text = suggestion;
+                            onAzElTimezoneChanged(suggestion);
+                          },
+                          validator: (value) {
+                            final trimmed = value?.trim() ?? '';
+                            if (!kIanaTimeZones.contains(trimmed)) {
+                              return 'Bitte eine gültige Zeitzone auswählen';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            final trimmed = value?.trim() ?? '';
+                            if (kIanaTimeZones.contains(trimmed)) {
+                              onAzElTimezoneChanged(trimmed);
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -327,7 +319,7 @@ class _LocationSection extends StatelessWidget {
                 decoration: const InputDecoration(
                   labelText: 'Breitengrad (Lat)',
                 ),
-                onSaved: (v) => latitude = double.tryParse(v ?? '') ?? 0,
+                onChanged: (v) => latitude = double.tryParse(v) ?? 0,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
                 ],
@@ -342,7 +334,7 @@ class _LocationSection extends StatelessWidget {
                   signed: true,
                 ),
                 decoration: const InputDecoration(labelText: 'Längengrad'),
-                onSaved: (v) => longitude = double.tryParse(v ?? '') ?? 0,
+                onChanged: (v) => longitude = double.tryParse(v) ?? 0,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
                 ],
