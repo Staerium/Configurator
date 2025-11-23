@@ -67,7 +67,7 @@ extension _HorizonLimitTab on _SectorWidgetState {
                     elevation: 0,
                     color: Theme.of(
                       context,
-                    ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                    ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: SingleChildScrollView(
@@ -342,7 +342,7 @@ extension _HorizonLimitTab on _SectorWidgetState {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.5),
+            color: color.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(4),
           ),
           child: const Row(

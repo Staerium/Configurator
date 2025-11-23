@@ -1320,12 +1320,6 @@ class _ConfigScreenState extends State<ConfigScreen> {
     });
   }
 
-  void _openLegalInformation() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const LegalScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 800;

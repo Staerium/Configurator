@@ -15,7 +15,7 @@ class DividerWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final dividerColor = colorScheme.outlineVariant.withOpacity(0.6);
+    final dividerColor = colorScheme.outlineVariant.withValues(alpha: 0.6);
     final textStyle = Theme.of(context)
             .textTheme
             .labelLarge

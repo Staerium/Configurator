@@ -253,10 +253,10 @@ extension _LouvreTab on _SectorWidgetState {
                 aspectRatio: 1 / 2,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: colorScheme.outline.withOpacity(0.25),
+                      color: colorScheme.outline.withValues(alpha: 0.25),
                     ),
                   ),
                   child: Padding(

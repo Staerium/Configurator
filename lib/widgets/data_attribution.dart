@@ -62,7 +62,7 @@ class MapDataAttributionOverlay extends StatelessWidget {
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Column(
