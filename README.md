@@ -2,93 +2,70 @@
 
 # Konfigurator
 
-**Konfigurator** is a cross-platform Flutter application for configuring, visualizing, and managing facade sectors and solar control logic. It is designed for building automation, facade planning, and smart shading projects, supporting import/export, mapping, and bus address configuration.
+Konfigurator is a Flutter app for creating and editing `.sunproj` (XML) projects that describe facade shading sectors and KNX bus addresses. The UI is German and runs on desktop, mobile, and the web.
 
-## Key Features
+## Key Capabilities
 
-- **Facade Sector Management:** Create, edit, and remove facade sectors with custom properties (orientation, horizon, louvre, bus addresses, etc.).
-- **Mapping & Geolocation:** Select facade points and visualize sectors on an interactive map (OpenStreetMap imagery).
-- **Solar Calculations:** Calculate and visualize solar paths and angles for each sector using `solar_calculator` and `fl_chart`.
-- **Bus Address Integration:** Configure KNX/field bus addresses for brightness, irradiance, azimuth, elevation, and more.
-- **File Import/Export:** Save and load project files (`.sunproj`) for easy sharing and backup.
-- **Modern UI:** Responsive navigation, dialogs for orientation and location, and address autocomplete.
-- **Cross-Platform:** Runs on Windows, macOS, Linux, Android, iOS, and Web.
-
-## Screenshots
-
-<!-- Add screenshots here, e.g.: -->
-<!-- ![Main UI](assets/screenshots/main.png) -->
+- Project lifecycle: start from scratch or open an existing `.sunproj`, detect unsaved changes, and save/save-as (web uses the File System Access API when available, otherwise downloads the file).
+- General settings: pick latitude/longitude on a map (Esri World Imagery tiles with Nominatim search), choose the azimuth/elevation source (internet, KNX time, or KNX az/el) with DPT selection and timezone, and configure KNX connection types (Routing, Tunneling UDP/TCP) including IP, ports, multicast, and optional auto-reconnect.
+- Sector editor: add/copy/paste/remove sectors, compute facade orientation from two map points, toggle horizon limit and louvre tracking, set sensor usage (brightness and irradiance), thresholds/delays with AND/OR linkage, sun/height/louvre addresses, and override on/off auto behaviors.
+- Horizon tools: edit horizon and ceiling point tables (anchors at -90°/+90°), import CSV data per sector, and plot solar paths for a chosen date plus solstice curves and the live sun position.
+- Louvre tracking: define slat geometry, angle limits for 0%/100%, minimum change and buffer, and preview the resulting angle.
+- Time programs: build weekly time switch programs with 1-bit or 1-byte commands, weekday masks, time pickers, sliders, and KNX group address validation; copy/paste programs for reuse.
+- Legal and attribution: in-app screen shows the MIT license, privacy policy, third-party licenses, and required Esri/Nominatim attributions. The home screen also includes a placeholder button for an upcoming Staerium server connection.
 
 ## Getting Started
 
-1. **Clone the repository:**
-	```sh
-	git clone https://github.com/SchattenRegler/Konfigurator.git
-	cd Konfigurator
-	```
-2. **Install dependencies:**
-	```sh
-	flutter pub get
-	```
-3. **Run the app:**
-	```sh
-	flutter run
-	```
+1. Clone the repository and enter the project directory.
+2. Install dependencies:
+   ```sh
+   flutter pub get
+   ```
+3. Run the app (pass your ArcGIS key as a dart-define if you have one):
+   ```sh
+   flutter run --dart-define=ARCGIS_API_KEY=<YOUR_ARCGIS_API_KEY>
+   ```
 
 ## ArcGIS API Key
 
-The facade and location dialogs use Esri World Imagery tiles that now expect an ArcGIS API key. Provide your key at build/run time via Dart defines; the app reads it through `MapTilesConfig.arcgisApiKey`.
+Map dialogs use Esri World Imagery. Provide a key via `--dart-define=ARCGIS_API_KEY=<YOUR_ARCGIS_API_KEY>` so tiles and attribution metadata can be loaded under your credentials (see `lib/config/map_tiles.dart`). Without the define, the app falls back to the public endpoint, which is suitable for quick tests only. Add the same define to your CI/build commands (`flutter build <platform> --dart-define=ARCGIS_API_KEY=...`).
 
-- **Development run:**
-  ```sh
-  flutter run --dart-define=ARCGIS_API_KEY=<YOUR_ARCGIS_API_KEY>
-  ```
-- **Building (example for macOS):**
-  ```sh
-  flutter build macos --dart-define=ARCGIS_API_KEY=<YOUR_ARCGIS_API_KEY>
-  ```
+## CSV Import (Horizont/Decke)
 
-- **GitHub Actions:** Add the key as a repository secret named `ARCGIS_API_KEY` (Settings → Secrets and variables → Actions → New repository secret). The workflow consumes it automatically for every build via `--dart-define`.
-
-If you omit the define the app still loads the public tiles (suitable only for quick testing), so keep the define in your IDE run configurations for compliant production usage.
+The horizon tab can import CSV files with sector-specific points. Each row must start with a sector number followed by `KurveUnten` (horizon) or `KurveOben` (ceiling) and then azimuth/elevation value pairs. After import you choose which sector ID to apply; locked anchor points at -90°/+90° are preserved.
 
 ## Project Structure
 
-- `lib/main.dart` – App entry point, navigation, and main configuration logic
-- `lib/sector.dart` – Sector data model and sector editing widget
-- `lib/facade_orientation_dialog.dart` – Dialog for selecting and visualizing facade orientation
-- `lib/location_dialog.dart` – Dialog for selecting a single point (lat/lng) on the map
-- `assets/` – App assets (SVGs, icons, etc.)
-- `test/` – Widget and unit tests
+- `lib/main.dart` – app entry, navigation, XML load/save, and unsaved-change handling
+- `lib/general.dart` – general settings and KNX connection forms
+- `lib/sector/sector_widget.dart` – sector editor with horizon and louvre tabs
+- `lib/facade_orientation_dialog.dart` – map-based facade orientation picker
+- `lib/location_dialog.dart` – map-based location picker
+- `lib/timeswitch.dart` – time program models and widgets
+- `lib/config/map_tiles.dart` – Esri tile configuration and API key handling
+- `lib/services/` – Esri attribution and Nominatim search helpers
+- `lib/widgets/data_attribution.dart` – map attribution overlays
+- `assets/` – app icon and embedded legal texts
 
 ## Main Dependencies
 
-- [Flutter](https://flutter.dev/) (cross-platform UI)
-- [file_picker](https://pub.dev/packages/file_picker) (file import/export)
-- [uuid](https://pub.dev/packages/uuid) (unique IDs)
-- [geocoding](https://pub.dev/packages/geocoding) (address lookup)
-- [flutter_map](https://pub.dev/packages/flutter_map) (map UI)
-- [latlong2](https://pub.dev/packages/latlong2) (lat/lng types)
-- [flutter_typeahead](https://pub.dev/packages/flutter_typeahead) (address autocomplete)
-- [http](https://pub.dev/packages/http) (API calls)
-- [fl_chart](https://pub.dev/packages/fl_chart) (charts)
-- [solar_calculator](https://pub.dev/packages/solar_calculator) (solar position)
-- [flutter_svg](https://pub.dev/packages/flutter_svg) (SVG rendering)
-
-See `pubspec.yaml` for the full list.
+- `flutter_map`, `latlong2` – map UI and coordinates
+- `file_picker`, `universal_html`, `file_system_access_api` – file import/export on desktop and web
+- `flutter_typeahead`, `http` – address suggestions via Nominatim
+- `fl_chart`, `solar_calculator` – solar path charting
+- `flutter_svg` – louvre preview asset
+- `url_launcher`, `xml`, `uuid`, `dart_pubspec_licenses`
+- See `pubspec.yaml` for the full list.
 
 ## Usage Overview
 
-1. **Create or open a project**: Start a new configuration or load an existing `.sunproj` file.
-2. **Configure general settings**: Set version, bus addresses, and azimuth/elevation options.
-3. **Manage sectors**: Add, edit, or remove facade sectors. Set orientation, horizon, louvre, and bus addresses for each sector.
-4. **Map & solar tools**: Use dialogs to select facade points on the map and visualize solar paths.
-5. **Save/export**: Export your configuration for use in building automation systems.
-
-## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss your ideas.
+1. Create or open a `.sunproj`.
+2. Set location, azimuth/elevation source, timezone, and KNX connection details.
+3. Add sectors, set orientation via map or manual entry, configure imputs/outputs, and optionally enable louvre tracking or horizon limiting.
+4. Use the horizon tab to edit or import curves and validate them against solar paths; use the louvre tab to tune geometry.
+5. Add time programs if needed.
+6. Save the project; the window title shows `*` when changes are unsaved.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See `LICENSE.txt` for details.
