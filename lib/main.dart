@@ -1142,6 +1142,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
           // Remember handle for future quick saves
           _webFileHandle = fileHandle;
           _lastSavedXmlSnapshot = xml;
+          setState(() { /* The file handle changed. */ });
 
           return true;
         } catch (e) {
@@ -1163,6 +1164,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
         anchor.remove();
         html.Url.revokeObjectUrl(url);
         _lastSavedXmlSnapshot = xml;
+        setState(() { /* The file handle changed. */ });
         return true;
       } catch (e) {
         if (mounted) {
@@ -1186,6 +1188,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
           await file.writeAsString(xml);
           _lastXmlPath = result; // remember for quick save
           _lastSavedXmlSnapshot = xml;
+          setState(() { /* The file handle changed. */ });
           return true;
         } catch (e) {
           if (mounted) {
@@ -1226,6 +1229,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
             js_util.callMethod(writable, 'close', []),
           );
           _lastSavedXmlSnapshot = xmlString;
+          setState(() { /* The file handle changed. */ });
           return true;
         } catch (e) {
           // If writing fails (e.g., permission revoked), forget handle and do Save As
@@ -1245,6 +1249,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
           final file = File(_lastXmlPath!);
           await file.writeAsString(xmlString);
           _lastSavedXmlSnapshot = xmlString;
+          setState(() { /* The file handle changed. */ });
           return true;
         } catch (e) {
           if (mounted) {
