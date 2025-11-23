@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 double latitude = 0;
 double longitude = 0;
 
-String version = '0.9.3';
+String version = '0.9.4';
 
 // Azimuth/Elevation settings
 String azElOption = 'Internet';
