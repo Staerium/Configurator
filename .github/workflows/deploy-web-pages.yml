@@ -1,0 +1,54 @@
+name: Deploy Web to Configurator-Web Pages
+
+on:
+  release:
+    types: [published]
+
+# Publishes the Flutter web build into the Staerium/Configurator-Web repository
+# to host the GitHub Pages site. Uses a GitHub App installation token (no PAT).
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    if: github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    env:
+      ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }}
+      TARGET_REPOSITORY: Staerium/Configurator-Web
+      BASE_HREF: /Configurator-Web/
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Flutter web (release)
+        run: flutter build web --release --base-href $BASE_HREF --dart-define=ARCGIS_API_KEY=$ARCGIS_API_KEY
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.WEB_APP_ID }}
+          private-key: ${{ secrets.WEB_APP_PRIVATE_KEY }}
+          owner: Staerium
+
+      - name: Publish to Configurator-Web repository (gh-pages)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ steps.app-token.outputs.token }}
+          external_repository: ${{ env.TARGET_REPOSITORY }}
+          publish_branch: gh-pages
+          publish_dir: build/web
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: Deploy web for ${{ github.event.release.tag_name }}
