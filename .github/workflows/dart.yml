@@ -115,6 +115,7 @@ jobs:
             -scheme Runner \
             -configuration Release \
             -sdk macosx \
+            -derivedDataPath build/macos \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
