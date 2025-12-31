@@ -108,7 +108,17 @@ jobs:
 
       - name: Build macOS
         if: runner.os == 'macOS'
-        run: flutter build macos --release --dart-define=ARCGIS_API_KEY=$ARCGIS_API_KEY --no-codesign
+        run: |
+          flutter build macos --release --dart-define=ARCGIS_API_KEY=$ARCGIS_API_KEY --config-only
+          xcodebuild \
+            -workspace macos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk macosx \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
 
       - name: Build Windows
         if: runner.os == 'Windows'
