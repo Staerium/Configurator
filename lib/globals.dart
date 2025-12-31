@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 double latitude = 0;
 double longitude = 0;
 
-String version = '1.0.0';
+String version = '1.1.0';
 
 // Azimuth/Elevation settings
 String azElOption = 'Internet';
@@ -79,6 +79,12 @@ class Sector {
   String sunBoolAddress;
   bool useBrightness;
   bool useIrradiance;
+  bool brightnessDynamicDelay;
+  bool irradianceDynamicDelay;
+  List<DelayPoint> brightnessHighDelayPoints;
+  List<DelayPoint> brightnessLowDelayPoints;
+  List<DelayPoint> irradianceHighDelayPoints;
+  List<DelayPoint> irradianceLowDelayPoints;
   int? brightnessUpperThreshold;
   int? brightnessUpperDelay;
   int? brightnessLowerThreshold;
@@ -104,6 +110,12 @@ class Sector {
     this.orientation = 0,
     this.useBrightness = true,
     this.useIrradiance = true,
+    this.brightnessDynamicDelay = false,
+    this.irradianceDynamicDelay = false,
+    List<DelayPoint>? brightnessHighDelayPoints,
+    List<DelayPoint>? brightnessLowDelayPoints,
+    List<DelayPoint>? irradianceHighDelayPoints,
+    List<DelayPoint>? irradianceLowDelayPoints,
     this.horizonLimit = false,
     List<Point>? horizonPoints,
     List<Point>? ceilingPoints,
@@ -137,7 +149,23 @@ class Sector {
          ceilingPoints != null
              ? ceilingPoints.map(clonePoint).toList()
              : <Point>[],
-       ) {
+       ),
+       brightnessHighDelayPoints =
+           brightnessHighDelayPoints != null
+               ? brightnessHighDelayPoints.map(cloneDelayPoint).toList()
+               : <DelayPoint>[],
+       brightnessLowDelayPoints =
+           brightnessLowDelayPoints != null
+               ? brightnessLowDelayPoints.map(cloneDelayPoint).toList()
+               : <DelayPoint>[],
+       irradianceHighDelayPoints =
+           irradianceHighDelayPoints != null
+               ? irradianceHighDelayPoints.map(cloneDelayPoint).toList()
+               : <DelayPoint>[],
+       irradianceLowDelayPoints =
+           irradianceLowDelayPoints != null
+               ? irradianceLowDelayPoints.map(cloneDelayPoint).toList()
+               : <DelayPoint>[] {
     nameNotifier = ValueNotifier<String>(name);
   }
 
@@ -164,11 +192,26 @@ class Point {
   });
 }
 
+class DelayPoint {
+  double brightness;
+  double seconds;
+
+  DelayPoint({
+    this.brightness = 0,
+    this.seconds = 0,
+  });
+}
+
 Point clonePoint(Point source) => Point(
   x: source.x,
   y: source.y,
   isAzimuthLocked: source.isAzimuthLocked,
   isDefault: source.isDefault,
+);
+
+DelayPoint cloneDelayPoint(DelayPoint source) => DelayPoint(
+  brightness: source.brightness,
+  seconds: source.seconds,
 );
 
 List<Point> ensureDefaultHorizonPoints(List<Point> points) =>

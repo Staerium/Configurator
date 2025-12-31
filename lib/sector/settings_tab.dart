@@ -169,7 +169,19 @@ extension _SettingsTab on _SectorWidgetState {
               },
             ),
           if (sector.useBrightness) const SizedBox(height: 16),
-          if (sector.useBrightness)
+          if (sector.useBrightness) 
+            SwitchListTile.adaptive(
+              title: const Text("Dynamische Verzögerungszeit"), 
+              value: sector.brightnessDynamicDelay,
+              onChanged: (v) => _mutate(() {
+                sector.brightnessDynamicDelay = v;
+                _validateDelayCurves();
+              }),
+            ),
+          if (sector.useBrightness) const SizedBox(height: 16),
+          if (sector.useBrightness && sector.brightnessDynamicDelay)
+            _buildDelayEditor(isBrightness: true),
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
             TextFormField(
               initialValue: sector.brightnessUpperThreshold?.toString() ?? '',
               decoration: InputDecoration(
@@ -197,8 +209,9 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useBrightness) const SizedBox(height: 16),
-          if (sector.useBrightness)
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
+            const SizedBox(height: 16),
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
             TextFormField(
               initialValue: sector.brightnessUpperDelay?.toString() ?? '',
               decoration: InputDecoration(
@@ -220,8 +233,9 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useBrightness) const SizedBox(height: 16),
-          if (sector.useBrightness)
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
+            const SizedBox(height: 16),
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
             TextFormField(
               initialValue: sector.brightnessLowerThreshold?.toString() ?? '',
               decoration: InputDecoration(
@@ -249,8 +263,9 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useBrightness) const SizedBox(height: 16),
-          if (sector.useBrightness)
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
+            const SizedBox(height: 16),
+          if (sector.useBrightness && !sector.brightnessDynamicDelay)
             TextFormField(
               initialValue: sector.brightnessLowerDelay?.toString() ?? '',
               decoration: InputDecoration(
@@ -313,12 +328,24 @@ extension _SettingsTab on _SectorWidgetState {
               },
             ),
           if (sector.useIrradiance) const SizedBox(height: 16),
-          if (sector.useIrradiance)
+          if (sector.useIrradiance) 
+            SwitchListTile.adaptive(
+              title: const Text("Dynamische Verzögerungszeit"), 
+              value: sector.irradianceDynamicDelay,
+              onChanged: (v) => _mutate(() {
+                sector.irradianceDynamicDelay = v;
+                _validateDelayCurves();
+              }),
+            ),
+          if (sector.useIrradiance) const SizedBox(height: 16),
+          if (sector.useIrradiance && sector.irradianceDynamicDelay)
+            _buildDelayEditor(isBrightness: false),
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay)
             TextFormField(
               initialValue: sector.irradianceUpperThreshold?.toString() ?? '',
               decoration: InputDecoration(
                 labelText: 'Globalstrahlungsschwellwert Tief --> Hoch',
-                suffixText: 'Lux',
+                suffixText: 'W/m²',
                 errorText: _irradianceUpperThresholdError,
               ),
               onChanged: (v) {
@@ -341,8 +368,8 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useIrradiance) const SizedBox(height: 16),
-          if (sector.useIrradiance)
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay) const SizedBox(height: 16),
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay)
             TextFormField(
               initialValue: sector.irradianceUpperDelay?.toString() ?? '',
               decoration: InputDecoration(
@@ -364,13 +391,13 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useIrradiance) const SizedBox(height: 16),
-          if (sector.useIrradiance)
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay) const SizedBox(height: 16),
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay)
             TextFormField(
               initialValue: sector.irradianceLowerThreshold?.toString() ?? '',
               decoration: InputDecoration(
                 labelText: 'Globalstrahlungsschwellwert Hoch --> Tief',
-                suffixText: 'Lux',
+                suffixText: 'W/m²',
                 errorText: _irradianceLowerThresholdError,
               ),
               onChanged: (v) {
@@ -393,8 +420,8 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
-          if (sector.useIrradiance) const SizedBox(height: 16),
-          if (sector.useIrradiance)
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay) const SizedBox(height: 16),
+          if (sector.useIrradiance && !sector.irradianceDynamicDelay)
             TextFormField(
               initialValue: sector.irradianceLowerDelay?.toString() ?? '',
               decoration: InputDecoration(
@@ -416,6 +443,7 @@ extension _SettingsTab on _SectorWidgetState {
                 }
               },
             ),
+
           if (sector.useBrightness && sector.useIrradiance)
             const DividerWithText(
               text: 'Verknüpfung',
@@ -679,6 +707,360 @@ extension _SettingsTab on _SectorWidgetState {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDelayEditor({required bool isBrightness}) {
+    final highColor = isBrightness ? Colors.orange : Colors.purple;
+    final lowColor = isBrightness ? Colors.blue : Colors.teal;
+    final xLabel = isBrightness ? 'Helligkeit' : 'Globalstrahlung';
+    final xSuffix = isBrightness ? 'lx' : 'W/m²';
+
+    return Card(
+      elevation: 0,
+      color: Theme.of(context)
+          .colorScheme
+          .surfaceContainerHighest
+          .withValues(alpha: 0.2),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Dynamische Verzögerungskurven',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final highEditor = _buildDelayCurveEditor(
+                  title: isBrightness ? 'Hell' : 'Hoch',
+                  color: highColor,
+                  isHigh: true,
+                  isBrightness: isBrightness,
+                  xLabel: xLabel,
+                  xSuffix: xSuffix,
+                );
+                final lowEditor = _buildDelayCurveEditor(
+                  title: isBrightness ? 'Dunkel' : 'Tief',
+                  color: lowColor,
+                  isHigh: false,
+                  isBrightness: isBrightness,
+                  xLabel: xLabel,
+                  xSuffix: xSuffix,
+                );
+                if (constraints.maxWidth > 900) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: highEditor),
+                      const SizedBox(width: 12),
+                      Expanded(child: lowEditor),
+                    ],
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    highEditor,
+                    const SizedBox(height: 12),
+                    lowEditor,
+                  ],
+                );
+              },
+            ),
+            if (_getDelayRelationError(isBrightness: isBrightness) != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                _getDelayRelationError(isBrightness: isBrightness)!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ],
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: _buildDelayChart(
+                highColor: highColor,
+                lowColor: lowColor,
+                isBrightness: isBrightness,
+                xLabel: xLabel,
+                xSuffix: xSuffix,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDelayCurveEditor({
+    required String title,
+    required bool isHigh,
+    required bool isBrightness,
+    required Color color,
+    required String xLabel,
+    required String xSuffix,
+  }) {
+    final points = _getDelayList(isBrightness: isBrightness, isHigh: isHigh);
+    final sortedPoints = [...points]
+      ..sort((a, b) => a.brightness.compareTo(b.brightness));
+    final xCtrls = _getDelayXCtrls(
+      isBrightness: isBrightness,
+      isHigh: isHigh,
+    );
+    final yCtrls = _getDelayYCtrls(
+      isBrightness: isBrightness,
+      isHigh: isHigh,
+    );
+    final xErrors = _getDelayXErrors(
+      isBrightness: isBrightness,
+      isHigh: isHigh,
+    );
+    final yErrors = _getDelayYErrors(
+      isBrightness: isBrightness,
+      isHigh: isHigh,
+    );
+    final canAdd = points.length < 5;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: canAdd
+                  ? () => _addDelayPoint(
+                        isHigh: isHigh,
+                        isBrightness: isBrightness,
+                      )
+                  : null,
+              icon: const Icon(Icons.add),
+              label: Text(canAdd ? 'Punkt hinzufügen' : 'Max. 5 Punkte'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        if (points.isEmpty)
+          const Text('Keine Punkte definiert.')
+        else
+          ...sortedPoints.map(
+            (p) {
+              final brightnessCtrl = xCtrls[p] ??
+                  TextEditingController(text: _fmt(p.brightness));
+              xCtrls[p] = brightnessCtrl;
+              final secondsCtrl = yCtrls[p] ??
+                  TextEditingController(text: _fmt(p.seconds));
+              yCtrls[p] = secondsCtrl;
+              return Padding(
+                key: ValueKey(p),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: brightnessCtrl,
+                        decoration: InputDecoration(
+                          labelText: xLabel,
+                          suffixText: xSuffix,
+                          errorText: xErrors[p],
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        onChanged: (v) => _handleDelayPointChanged(
+                          p,
+                          isHigh: isHigh,
+                          isBrightness: isBrightness,
+                          isBrightnessField: true,
+                          value: v,
+                          controller: brightnessCtrl,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        controller: secondsCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Zeit',
+                          suffixText: 's',
+                          errorText: yErrors[p],
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        onChanged: (v) => _handleDelayPointChanged(
+                          p,
+                          isHigh: isHigh,
+                          isBrightness: isBrightness,
+                          isBrightnessField: false,
+                          value: v,
+                          controller: secondsCtrl,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => _removeDelayPoint(
+                        p,
+                        isHigh: isHigh,
+                        isBrightness: isBrightness,
+                      ),
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: 'Punkt entfernen',
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDelayChart({
+    required Color highColor,
+    required Color lowColor,
+    required bool isBrightness,
+    required String xLabel,
+    required String xSuffix,
+  }) {
+    final highPoints = [
+      ..._getDelayList(isBrightness: isBrightness, isHigh: true)
+    ]..sort((a, b) => a.brightness.compareTo(b.brightness));
+    final lowPoints = [
+      ..._getDelayList(isBrightness: isBrightness, isHigh: false)
+    ]..sort((a, b) => a.brightness.compareTo(b.brightness));
+
+    final hasData = highPoints.isNotEmpty || lowPoints.isNotEmpty;
+    final brightnessValues = <double>[
+      ...highPoints.map((p) => p.brightness),
+      ...lowPoints.map((p) => p.brightness),
+    ];
+    final secondsValues = <double>[
+      ...highPoints.map((p) => p.seconds),
+      ...lowPoints.map((p) => p.seconds),
+    ];
+    final minX = hasData ? brightnessValues.reduce(min) : 0.0;
+    final rawMaxX = hasData ? brightnessValues.reduce(max) : 100.0;
+    final maxX = rawMaxX > minX ? rawMaxX : minX + 1;
+    final maxSeconds = hasData ? secondsValues.reduce(max) : 10.0;
+    final maxY = max(maxSeconds * 1.2, 10);
+
+    final bars = <LineChartBarData>[
+      if (lowPoints.isNotEmpty)
+        LineChartBarData(
+          color: lowColor,
+          isCurved: false,
+          barWidth: 3,
+          dotData: FlDotData(show: true),
+          spots: lowPoints
+              .map(
+                (p) => FlSpot(p.brightness, p.seconds),
+              )
+              .toList(),
+        ),
+      if (highPoints.isNotEmpty)
+        LineChartBarData(
+          color: highColor,
+          isCurved: false,
+          barWidth: 3,
+          dotData: FlDotData(show: true),
+          spots: highPoints
+              .map(
+                (p) => FlSpot(p.brightness, p.seconds),
+              )
+              .toList(),
+        ),
+    ];
+
+    if (bars.isEmpty) {
+      bars.add(
+        LineChartBarData(
+          color: Colors.transparent,
+          barWidth: 0,
+          dotData: FlDotData(show: false),
+          spots: const [FlSpot(0, 0)],
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        LineChart(
+          LineChartData(
+            minX: minX,
+            maxX: maxX,
+            minY: 0,
+            maxY: double.parse(maxY.toStringAsFixed(1)),
+            gridData: const FlGridData(show: true),
+            lineTouchData: LineTouchData(
+              enabled: true,
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipItems: (spots) {
+                  return spots
+                      .map(
+                        (s) => LineTooltipItem(
+                          'Helligkeit: ${s.x.toStringAsFixed(1)} lx\nZeit: ${s.y.toStringAsFixed(1)} s',
+                          const TextStyle(color: Colors.black),
+                        ),
+                      )
+                      .toList();
+                },
+              ),
+            ),
+            titlesData: FlTitlesData(
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+            bottomTitles: AxisTitles(
+              axisNameWidget: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text('$xLabel [$xSuffix]'),
+              ),
+              axisNameSize: 28,
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 32,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              axisNameWidget: const Padding(
+                padding: EdgeInsets.only(right: 4),
+                  child: Text('Zeit [s]'),
+                ),
+                axisNameSize: 28,
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 40,
+                ),
+              ),
+            ),
+            lineBarsData: bars,
+          ),
+        ),
+        if (!hasData)
+          const Center(
+            child: Text('Keine Punkte definiert'),
+          ),
+      ],
     );
   }
 }

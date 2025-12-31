@@ -278,8 +278,8 @@ class _ConfigScreenState extends State<ConfigScreen> {
     bool? parseBool(String? value) {
       if (value == null) return null;
       final normalized = value.trim().toLowerCase();
-      if (normalized == 'true') return true;
-      if (normalized == 'false') return false;
+      if (normalized == 'true' || normalized == '1') return true;
+      if (normalized == 'false' || normalized == '0') return false;
       return null;
     }
 
@@ -288,6 +288,42 @@ class _ConfigScreenState extends State<ConfigScreen> {
       final trimmed = value.trim();
       if (trimmed.isEmpty) return null;
       return int.tryParse(trimmed);
+    }
+
+    double? parseDouble(String? value) {
+      if (value == null) return null;
+      final normalized = value.replaceAll(',', '.').trim();
+      if (normalized.isEmpty) return null;
+      return double.tryParse(normalized);
+    }
+
+    List<DelayPoint> parseDelayPoints(xml.XmlElement? parent) {
+      if (parent == null) return [];
+      final points = <DelayPoint>[];
+      for (final pElem in parent.findElements('Point')) {
+        final brightness = parseDouble(
+          pElem.getElement('Brightness')?.innerText ??
+              pElem.getElement('X')?.innerText,
+        );
+        final seconds = parseDouble(
+          pElem.getElement('Seconds')?.innerText ??
+              pElem.getElement('Y')?.innerText,
+        );
+        if (brightness == null || seconds == null) continue;
+        points.add(DelayPoint(brightness: brightness, seconds: seconds));
+      }
+      return points;
+    }
+
+    xml.XmlElement? findFirstElement(
+      xml.XmlElement parent,
+      List<String> names,
+    ) {
+      for (final name in names) {
+        final elem = parent.getElement(name);
+        if (elem != null) return elem;
+      }
+      return null;
     }
 
     setState(() {
@@ -426,6 +462,18 @@ class _ConfigScreenState extends State<ConfigScreen> {
           if (useIrradiance != null) {
             s.useIrradiance = useIrradiance;
           }
+          final brightnessDynamicDelay = parseBool(
+            sElem.getElement('BrightnessDynamicDelay')?.innerText,
+          );
+          if (brightnessDynamicDelay != null) {
+            s.brightnessDynamicDelay = brightnessDynamicDelay;
+          }
+          final irradianceDynamicDelay = parseBool(
+            sElem.getElement('IrradianceDynamicDelay')?.innerText,
+          );
+          if (irradianceDynamicDelay != null) {
+            s.irradianceDynamicDelay = irradianceDynamicDelay;
+          }
           s.brightnessUpperThreshold = parseInt(
             sElem.getElement('BrightnessUpperThreshold')?.innerText,
           );
@@ -437,6 +485,26 @@ class _ConfigScreenState extends State<ConfigScreen> {
           );
           s.brightnessLowerDelay = parseInt(
             sElem.getElement('BrightnessLowerDelay')?.innerText,
+          );
+          s.brightnessHighDelayPoints = parseDelayPoints(
+            findFirstElement(
+              sElem,
+              const [
+                'BrightnessDelayHigh',
+                'BrightnessHighDelayPoints',
+                'BrightnessDelayPointsHigh',
+              ],
+            ),
+          );
+          s.brightnessLowDelayPoints = parseDelayPoints(
+            findFirstElement(
+              sElem,
+              const [
+                'BrightnessDelayLow',
+                'BrightnessLowDelayPoints',
+                'BrightnessDelayPointsLow',
+              ],
+            ),
           );
           s.irradianceAddress =
               sElem.getElement('IrradianceAddress')?.innerText ?? '';
@@ -451,6 +519,26 @@ class _ConfigScreenState extends State<ConfigScreen> {
           );
           s.irradianceLowerDelay = parseInt(
             sElem.getElement('IrradianceLowerDelay')?.innerText,
+          );
+          s.irradianceHighDelayPoints = parseDelayPoints(
+            findFirstElement(
+              sElem,
+              const [
+                'IrradianceDelayHigh',
+                'IrradianceHighDelayPoints',
+                'IrradianceDelayPointsHigh',
+              ],
+            ),
+          );
+          s.irradianceLowDelayPoints = parseDelayPoints(
+            findFirstElement(
+              sElem,
+              const [
+                'IrradianceDelayLow',
+                'IrradianceLowDelayPoints',
+                'IrradianceDelayPointsLow',
+              ],
+            ),
           );
           final link = sElem.getElement('BrightnessIrradianceLink')?.innerText;
           if (link != null && link.isNotEmpty) {
@@ -934,6 +1022,14 @@ class _ConfigScreenState extends State<ConfigScreen> {
                     nest: s.useIrradiance.toString(),
                   );
                   builder.element(
+                    'BrightnessDynamicDelay',
+                    nest: s.brightnessDynamicDelay.toString(),
+                  );
+                  builder.element(
+                    'IrradianceDynamicDelay',
+                    nest: s.irradianceDynamicDelay.toString(),
+                  );
+                  builder.element(
                     'BrightnessAddress',
                     nest: s.brightnessAddress,
                   );
@@ -961,6 +1057,86 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   builder.element(
                     'BrightnessLowerDelay',
                     nest: s.brightnessLowerDelay?.toString() ?? '',
+                  );
+                  builder.element(
+                    'BrightnessDelayHigh',
+                    nest: () {
+                      for (final p in s.brightnessHighDelayPoints) {
+                        builder.element(
+                          'Point',
+                          nest: () {
+                            builder.element(
+                              'Brightness',
+                              nest: p.brightness.toString(),
+                            );
+                            builder.element(
+                              'Seconds',
+                              nest: p.seconds.toString(),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+                  builder.element(
+                    'BrightnessDelayLow',
+                    nest: () {
+                      for (final p in s.brightnessLowDelayPoints) {
+                        builder.element(
+                          'Point',
+                          nest: () {
+                            builder.element(
+                              'Brightness',
+                              nest: p.brightness.toString(),
+                            );
+                            builder.element(
+                              'Seconds',
+                              nest: p.seconds.toString(),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+                  builder.element(
+                    'IrradianceDelayHigh',
+                    nest: () {
+                      for (final p in s.irradianceHighDelayPoints) {
+                        builder.element(
+                          'Point',
+                          nest: () {
+                            builder.element(
+                              'Brightness',
+                              nest: p.brightness.toString(),
+                            );
+                            builder.element(
+                              'Seconds',
+                              nest: p.seconds.toString(),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  );
+                  builder.element(
+                    'IrradianceDelayLow',
+                    nest: () {
+                      for (final p in s.irradianceLowDelayPoints) {
+                        builder.element(
+                          'Point',
+                          nest: () {
+                            builder.element(
+                              'Brightness',
+                              nest: p.brightness.toString(),
+                            );
+                            builder.element(
+                              'Seconds',
+                              nest: p.seconds.toString(),
+                            );
+                          },
+                        );
+                      }
+                    },
                   );
                   builder.element(
                     'IrradianceAddress',
@@ -1432,8 +1608,28 @@ class _ConfigScreenState extends State<ConfigScreen> {
                                 ..louvreBuffer = _copiedSector!.louvreBuffer
                                 ..brightnessAddress =
                                     _copiedSector!.brightnessAddress
+                                ..brightnessDynamicDelay =
+                                    _copiedSector!.brightnessDynamicDelay
                                 ..irradianceAddress =
                                     _copiedSector!.irradianceAddress
+                                ..irradianceDynamicDelay =
+                                    _copiedSector!.irradianceDynamicDelay
+                                ..brightnessHighDelayPoints =
+                                    _copiedSector!.brightnessHighDelayPoints
+                                        .map(cloneDelayPoint)
+                                        .toList()
+                                ..brightnessLowDelayPoints =
+                                    _copiedSector!.brightnessLowDelayPoints
+                                        .map(cloneDelayPoint)
+                                        .toList()
+                                ..irradianceHighDelayPoints =
+                                    _copiedSector!.irradianceHighDelayPoints
+                                        .map(cloneDelayPoint)
+                                        .toList()
+                                ..irradianceLowDelayPoints =
+                                    _copiedSector!.irradianceLowDelayPoints
+                                        .map(cloneDelayPoint)
+                                        .toList()
                                 ..facadeAddress = _copiedSector!.facadeAddress
                                 ..facadeStart = _copiedSector!.facadeStart
                                 ..facadeEnd = _copiedSector!.facadeEnd,
@@ -1930,8 +2126,34 @@ class _ConfigScreenState extends State<ConfigScreen> {
                                                 _copiedSector!.louvreBuffer
                                             ..brightnessAddress =
                                                 _copiedSector!.brightnessAddress
+                                            ..brightnessDynamicDelay =
+                                                _copiedSector!
+                                                    .brightnessDynamicDelay
                                             ..irradianceAddress =
                                                 _copiedSector!.irradianceAddress
+                                            ..irradianceDynamicDelay =
+                                                _copiedSector!
+                                                    .irradianceDynamicDelay
+                                            ..brightnessHighDelayPoints =
+                                                _copiedSector!
+                                                    .brightnessHighDelayPoints
+                                                    .map(cloneDelayPoint)
+                                                    .toList()
+                                            ..brightnessLowDelayPoints =
+                                                _copiedSector!
+                                                    .brightnessLowDelayPoints
+                                                    .map(cloneDelayPoint)
+                                                    .toList()
+                                            ..irradianceHighDelayPoints =
+                                                _copiedSector!
+                                                    .irradianceHighDelayPoints
+                                                    .map(cloneDelayPoint)
+                                                    .toList()
+                                            ..irradianceLowDelayPoints =
+                                                _copiedSector!
+                                                    .irradianceLowDelayPoints
+                                                    .map(cloneDelayPoint)
+                                                    .toList()
                                             ..facadeAddress =
                                                 _copiedSector!.facadeAddress
                                             ..facadeStart =

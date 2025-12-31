@@ -72,6 +72,24 @@ class _SectorWidgetState extends State<SectorWidget> {
   String? _louvreMinimumChangeError;
   String? _louvreBufferError;
   String? _sunBoolAddressError;
+  final Map<DelayPoint, TextEditingController> _highBrightnessCtrls = {};
+  final Map<DelayPoint, TextEditingController> _highSecondsCtrls = {};
+  final Map<DelayPoint, TextEditingController> _lowBrightnessCtrls = {};
+  final Map<DelayPoint, TextEditingController> _lowSecondsCtrls = {};
+  final Map<DelayPoint, TextEditingController> _highIrradianceCtrls = {};
+  final Map<DelayPoint, TextEditingController> _highIrrSecondsCtrls = {};
+  final Map<DelayPoint, TextEditingController> _lowIrradianceCtrls = {};
+  final Map<DelayPoint, TextEditingController> _lowIrrSecondsCtrls = {};
+  final Map<DelayPoint, String?> _highBrightnessErrors = {};
+  final Map<DelayPoint, String?> _highSecondsErrors = {};
+  final Map<DelayPoint, String?> _lowBrightnessErrors = {};
+  final Map<DelayPoint, String?> _lowSecondsErrors = {};
+  final Map<DelayPoint, String?> _highIrradianceErrors = {};
+  final Map<DelayPoint, String?> _highIrrSecondsErrors = {};
+  final Map<DelayPoint, String?> _lowIrradianceErrors = {};
+  final Map<DelayPoint, String?> _lowIrrSecondsErrors = {};
+  String? _brightnessDelayRelationError;
+  String? _irradianceDelayRelationError;
   double _louvrePreviewPercent = 0;
 
   // CSV import state
@@ -89,6 +107,8 @@ class _SectorWidgetState extends State<SectorWidget> {
     _ceilingElController = TextEditingController();
     sector.ensureDefaultPoints();
     _syncPointEditors();
+    _syncDelayEditors();
+    _validateDelayCurves();
   }
 
   @override
@@ -108,6 +128,30 @@ class _SectorWidgetState extends State<SectorWidget> {
       c.dispose();
     }
     for (final c in _ceilingElCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _highBrightnessCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _highSecondsCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _lowBrightnessCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _lowSecondsCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _highIrradianceCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _highIrrSecondsCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _lowIrradianceCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _lowIrrSecondsCtrls.values) {
       c.dispose();
     }
     super.dispose();
@@ -137,6 +181,119 @@ class _SectorWidgetState extends State<SectorWidget> {
     }
   }
 
+  void _syncDelayEditors() {
+    for (final p in sector.brightnessHighDelayPoints) {
+      _highBrightnessCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.brightness)),
+      );
+      _highSecondsCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.seconds)),
+      );
+    }
+    for (final p in sector.brightnessLowDelayPoints) {
+      _lowBrightnessCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.brightness)),
+      );
+      _lowSecondsCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.seconds)),
+      );
+    }
+    for (final p in sector.irradianceHighDelayPoints) {
+      _highIrradianceCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.brightness)),
+      );
+      _highIrrSecondsCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.seconds)),
+      );
+    }
+    for (final p in sector.irradianceLowDelayPoints) {
+      _lowIrradianceCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.brightness)),
+      );
+      _lowIrrSecondsCtrls.putIfAbsent(
+        p,
+        () => TextEditingController(text: _fmt(p.seconds)),
+      );
+    }
+  }
+
+  List<DelayPoint> _getDelayList({
+    required bool isBrightness,
+    required bool isHigh,
+  }) {
+    if (isBrightness) {
+      return isHigh
+          ? sector.brightnessHighDelayPoints
+          : sector.brightnessLowDelayPoints;
+    }
+    return isHigh
+        ? sector.irradianceHighDelayPoints
+        : sector.irradianceLowDelayPoints;
+  }
+
+  Map<DelayPoint, TextEditingController> _getDelayXCtrls({
+    required bool isBrightness,
+    required bool isHigh,
+  }) {
+    if (isBrightness) {
+      return isHigh ? _highBrightnessCtrls : _lowBrightnessCtrls;
+    }
+    return isHigh ? _highIrradianceCtrls : _lowIrradianceCtrls;
+  }
+
+  Map<DelayPoint, TextEditingController> _getDelayYCtrls({
+    required bool isBrightness,
+    required bool isHigh,
+  }) {
+    if (isBrightness) {
+      return isHigh ? _highSecondsCtrls : _lowSecondsCtrls;
+    }
+    return isHigh ? _highIrrSecondsCtrls : _lowIrrSecondsCtrls;
+  }
+
+  Map<DelayPoint, String?> _getDelayXErrors({
+    required bool isBrightness,
+    required bool isHigh,
+  }) {
+    if (isBrightness) {
+      return isHigh ? _highBrightnessErrors : _lowBrightnessErrors;
+    }
+    return isHigh ? _highIrradianceErrors : _lowIrradianceErrors;
+  }
+
+  Map<DelayPoint, String?> _getDelayYErrors({
+    required bool isBrightness,
+    required bool isHigh,
+  }) {
+    if (isBrightness) {
+      return isHigh ? _highSecondsErrors : _lowSecondsErrors;
+    }
+    return isHigh ? _highIrrSecondsErrors : _lowIrrSecondsErrors;
+  }
+
+  String? _getDelayRelationError({required bool isBrightness}) =>
+      isBrightness
+          ? _brightnessDelayRelationError
+          : _irradianceDelayRelationError;
+
+  void _setDelayRelationError({
+    required bool isBrightness,
+    required String? value,
+  }) {
+    if (isBrightness) {
+      _brightnessDelayRelationError = value;
+    } else {
+      _irradianceDelayRelationError = value;
+    }
+  }
+
   void _mutate(VoidCallback update) => setState(update);
 
   void _addHorizonPoint() {
@@ -161,6 +318,274 @@ class _SectorWidgetState extends State<SectorWidget> {
       _ceilingAzErrors[p] = null;
       _ceilingElErrors[p] = null;
     });
+  }
+
+  void _addDelayPoint({required bool isHigh, required bool isBrightness}) {
+    final list = _getDelayList(isBrightness: isBrightness, isHigh: isHigh);
+    if (list.length >= 5) return;
+    DelayPoint proposePoint() {
+      final existingSorted = [...list]
+        ..sort((a, b) => a.brightness.compareTo(b.brightness));
+      double brightness =
+          existingSorted.isEmpty ? (isHigh ? 20 : 10) : existingSorted.last.brightness + 5;
+      double seconds;
+      if (existingSorted.isEmpty) {
+        seconds = 30;
+      } else {
+        final last = existingSorted.last;
+        seconds = isHigh ? max(0, last.seconds - 5) : last.seconds + 5;
+      }
+
+      for (int i = 0; i < 25; i++) {
+        final candidate = DelayPoint(
+          brightness: double.parse(brightness.toStringAsFixed(1)),
+          seconds: double.parse(seconds.toStringAsFixed(1)),
+        );
+        final tempHigh = [
+          ..._getDelayList(isBrightness: isBrightness, isHigh: true),
+          if (isHigh) candidate,
+        ];
+        final tempLow = [
+          ..._getDelayList(isBrightness: isBrightness, isHigh: false),
+          if (!isHigh) candidate,
+        ];
+        if (_computeDelayError(
+              high: tempHigh,
+              low: tempLow,
+              axisLabel: isBrightness ? 'Helligkeit' : 'Globalstrahlung',
+            ) ==
+            null) {
+          return candidate;
+        }
+        brightness += 5;
+        seconds += isHigh ? -2 : 2;
+        if (isHigh && seconds < 0) seconds = 0;
+      }
+
+      return DelayPoint(
+        brightness: double.parse(brightness.toStringAsFixed(1)),
+        seconds: double.parse(seconds.toStringAsFixed(1)),
+      );
+    }
+
+    final point = proposePoint();
+    setState(() {
+      list.add(point);
+      final xCtrls = _getDelayXCtrls(
+        isBrightness: isBrightness,
+        isHigh: isHigh,
+      );
+      final yCtrls = _getDelayYCtrls(
+        isBrightness: isBrightness,
+        isHigh: isHigh,
+      );
+      final xErrors = _getDelayXErrors(
+        isBrightness: isBrightness,
+        isHigh: isHigh,
+      );
+      final yErrors = _getDelayYErrors(
+        isBrightness: isBrightness,
+        isHigh: isHigh,
+      );
+      xCtrls[point] = TextEditingController(text: _fmt(point.brightness));
+      yCtrls[point] = TextEditingController(text: _fmt(point.seconds));
+      xErrors[point] = null;
+      yErrors[point] = null;
+      _validateDelayCurves();
+    });
+  }
+
+  void _removeDelayPoint(
+    DelayPoint point, {
+    required bool isHigh,
+    required bool isBrightness,
+  }) {
+    setState(() {
+      final list = _getDelayList(isBrightness: isBrightness, isHigh: isHigh);
+      list.remove(point);
+      _getDelayXCtrls(isBrightness: isBrightness, isHigh: isHigh)
+          .remove(point)
+          ?.dispose();
+      _getDelayYCtrls(isBrightness: isBrightness, isHigh: isHigh)
+          .remove(point)
+          ?.dispose();
+      _getDelayXErrors(isBrightness: isBrightness, isHigh: isHigh)
+          .remove(point);
+      _getDelayYErrors(isBrightness: isBrightness, isHigh: isHigh)
+          .remove(point);
+      _validateDelayCurves();
+    });
+  }
+
+  void _handleDelayPointChanged(
+    DelayPoint point, {
+    required bool isHigh,
+    required bool isBrightness,
+    required bool isBrightnessField,
+    required String value,
+    TextEditingController? controller,
+  }) {
+    _mutate(() {
+      final parsed = double.tryParse(value.replaceAll(',', '.'));
+      final list = _getDelayList(isBrightness: isBrightness, isHigh: isHigh);
+      final errorMap = isBrightnessField
+          ? _getDelayXErrors(isBrightness: isBrightness, isHigh: isHigh)
+          : _getDelayYErrors(isBrightness: isBrightness, isHigh: isHigh);
+      if (parsed == null || parsed < 0) {
+        errorMap[point] = 'Bitte gültigen Wert eingeben';
+      } else if (!isBrightnessField && parsed > 86400) {
+        errorMap[point] = 'Maximal 86400 Sekunden';
+      } else if (isBrightnessField &&
+          _hasDuplicateBrightness(list, point, parsed)) {
+        errorMap[point] = 'Helligkeitswert muss einzigartig sein';
+      } else {
+        errorMap[point] = null;
+        if (isBrightnessField) {
+          point.brightness = parsed;
+        } else {
+          point.seconds = parsed;
+        }
+      }
+      if (controller != null && controller.selection.baseOffset != -1) {
+        final selection = controller.selection;
+        // Preserve cursor even if text is reformatted (e.g., trimming)
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (controller.selection.baseOffset != -1 &&
+              controller.selection == selection) {
+            controller.selection = selection;
+          }
+        });
+      }
+      _validateDelayCurves();
+    });
+  }
+
+  bool _hasDuplicateBrightness(
+    List<DelayPoint> points,
+    DelayPoint current,
+    double newValue,
+  ) {
+    for (final p in points) {
+      if (identical(p, current)) continue;
+      if ((p.brightness - newValue).abs() < 1e-6) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _hasDelayInputErrors({required bool isBrightness}) {
+    if (isBrightness) {
+      return _highBrightnessErrors.values.any((e) => e != null) ||
+          _highSecondsErrors.values.any((e) => e != null) ||
+          _lowBrightnessErrors.values.any((e) => e != null) ||
+          _lowSecondsErrors.values.any((e) => e != null);
+    }
+    return _highIrradianceErrors.values.any((e) => e != null) ||
+        _highIrrSecondsErrors.values.any((e) => e != null) ||
+        _lowIrradianceErrors.values.any((e) => e != null) ||
+        _lowIrrSecondsErrors.values.any((e) => e != null);
+  }
+
+  String? _computeDelayError({
+    required List<DelayPoint> high,
+    required List<DelayPoint> low,
+    required String axisLabel,
+  }) {
+    final highByBrightness = [...high]
+      ..sort((a, b) => a.brightness.compareTo(b.brightness));
+    final lowByBrightness = [...low]
+      ..sort((a, b) => a.brightness.compareTo(b.brightness));
+
+    for (int i = 1; i < highByBrightness.length; i++) {
+      if (highByBrightness[i].seconds > highByBrightness[i - 1].seconds) {
+        final name = axisLabel == 'Helligkeit' ? 'Hell' : 'Hoch';
+        return '$name darf mit steigender $axisLabel nicht länger werden (Verstoß bei ${highByBrightness[i].brightness.toStringAsFixed(1)}).';
+      }
+    }
+
+    for (int i = 1; i < lowByBrightness.length; i++) {
+      if (lowByBrightness[i].seconds < lowByBrightness[i - 1].seconds) {
+        final name = axisLabel == 'Helligkeit' ? 'Dunkel' : 'Tief';
+        return '$name darf mit steigender $axisLabel nicht kürzer werden (Verstoß bei ${lowByBrightness[i].brightness.toStringAsFixed(1)}).';
+      }
+    }
+
+    if (high.isEmpty || low.isEmpty) return null;
+
+    final highBySeconds = [...high]
+      ..sort((a, b) => a.seconds.compareTo(b.seconds));
+    final lowBySeconds = [...low]
+      ..sort((a, b) => a.seconds.compareTo(b.seconds));
+
+    final secondsSamples = <double>{
+      ...highBySeconds.map((p) => p.seconds),
+      ...lowBySeconds.map((p) => p.seconds),
+    }.toList()
+      ..sort();
+
+    for (final s in secondsSamples) {
+      final highVal = _interpolateBrightnessForSeconds(highBySeconds, s);
+      final lowVal = _interpolateBrightnessForSeconds(lowBySeconds, s);
+      if (highVal != null && lowVal != null && highVal <= lowVal) {
+        final hiName = axisLabel == 'Helligkeit' ? 'Hell' : 'Hoch';
+        final loName = axisLabel == 'Helligkeit' ? 'Dunkel' : 'Tief';
+        return 'Kurve $hiName muss rechts von $loName liegen (bei ${s.toStringAsFixed(1)} s).';
+      }
+    }
+    return null;
+  }
+
+  void _validateDelayCurves() {
+    _setDelayRelationError(
+      isBrightness: true,
+      value: _hasDelayInputErrors(isBrightness: true)
+          ? null
+          : _computeDelayError(
+              high: sector.brightnessHighDelayPoints,
+              low: sector.brightnessLowDelayPoints,
+              axisLabel: 'Helligkeit',
+            ),
+    );
+    _setDelayRelationError(
+      isBrightness: false,
+      value: _hasDelayInputErrors(isBrightness: false)
+          ? null
+          : _computeDelayError(
+              high: sector.irradianceHighDelayPoints,
+              low: sector.irradianceLowDelayPoints,
+              axisLabel: 'Globalstrahlung',
+            ),
+    );
+  }
+
+  double? _interpolateBrightnessForSeconds(
+    List<DelayPoint> points,
+    double seconds,
+  ) {
+    if (points.isEmpty) return null;
+    if (points.length == 1) {
+      return points.first.brightness;
+    }
+    if (seconds <= points.first.seconds) {
+      return points.first.brightness;
+    }
+    if (seconds >= points.last.seconds) {
+      return points.last.brightness;
+    }
+    for (int i = 0; i < points.length - 1; i++) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
+      if (seconds == p1.seconds) return p1.brightness;
+      if (seconds == p2.seconds) return p2.brightness;
+      if (seconds > p1.seconds && seconds < p2.seconds) {
+        final span = p2.seconds - p1.seconds;
+        if (span == 0) return max(p1.brightness, p2.brightness);
+        final t = (seconds - p1.seconds) / span;
+        return p1.brightness + t * (p2.brightness - p1.brightness);
+      }
+    }
+    return points.last.brightness;
   }
 
   List<FlSpot> _computeSolarPath(DateTime date) {
@@ -489,6 +914,7 @@ class _SectorWidgetState extends State<SectorWidget> {
   @override
   Widget build(BuildContext context) {
     _syncPointEditors();
+    _syncDelayEditors();
     sector.ensureDefaultPoints();
 
     final tabs = <Tab>[
