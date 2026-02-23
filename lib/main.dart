@@ -93,10 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         if (handlesResult is List && handlesResult.isNotEmpty) {
           final handle = handlesResult.first;
-          final file = await js_util.promiseToFuture( 
+          final file = await js_util.promiseToFuture(
             js_util.callMethod(handle, 'getFile', []),
           );
-          final content = await js_util.promiseToFuture<String>( 
+          final content = await js_util.promiseToFuture<String>(
             js_util.callMethod(file, 'text', []),
           );
           if (!mounted) return;
@@ -440,8 +440,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
               5;
           s.brightnessAddress =
               sElem.getElement('BrightnessAddress')?.innerText ?? '';
-          s.heightAddress =
-              sElem.getElement('HeightAddress')?.innerText ?? '';
+          s.heightAddress = sElem.getElement('HeightAddress')?.innerText ?? '';
           s.louvreAngleAddress =
               sElem.getElement('LouvreAngleAddress')?.innerText ?? '';
           final sunBoolAddress = sElem.getElement('SunBoolAddress')?.innerText;
@@ -487,24 +486,18 @@ class _ConfigScreenState extends State<ConfigScreen> {
             sElem.getElement('BrightnessLowerDelay')?.innerText,
           );
           s.brightnessHighDelayPoints = parseDelayPoints(
-            findFirstElement(
-              sElem,
-              const [
-                'BrightnessDelayHigh',
-                'BrightnessHighDelayPoints',
-                'BrightnessDelayPointsHigh',
-              ],
-            ),
+            findFirstElement(sElem, const [
+              'BrightnessDelayHigh',
+              'BrightnessHighDelayPoints',
+              'BrightnessDelayPointsHigh',
+            ]),
           );
           s.brightnessLowDelayPoints = parseDelayPoints(
-            findFirstElement(
-              sElem,
-              const [
-                'BrightnessDelayLow',
-                'BrightnessLowDelayPoints',
-                'BrightnessDelayPointsLow',
-              ],
-            ),
+            findFirstElement(sElem, const [
+              'BrightnessDelayLow',
+              'BrightnessLowDelayPoints',
+              'BrightnessDelayPointsLow',
+            ]),
           );
           s.irradianceAddress =
               sElem.getElement('IrradianceAddress')?.innerText ?? '';
@@ -521,24 +514,18 @@ class _ConfigScreenState extends State<ConfigScreen> {
             sElem.getElement('IrradianceLowerDelay')?.innerText,
           );
           s.irradianceHighDelayPoints = parseDelayPoints(
-            findFirstElement(
-              sElem,
-              const [
-                'IrradianceDelayHigh',
-                'IrradianceHighDelayPoints',
-                'IrradianceDelayPointsHigh',
-              ],
-            ),
+            findFirstElement(sElem, const [
+              'IrradianceDelayHigh',
+              'IrradianceHighDelayPoints',
+              'IrradianceDelayPointsHigh',
+            ]),
           );
           s.irradianceLowDelayPoints = parseDelayPoints(
-            findFirstElement(
-              sElem,
-              const [
-                'IrradianceDelayLow',
-                'IrradianceLowDelayPoints',
-                'IrradianceDelayPointsLow',
-              ],
-            ),
+            findFirstElement(sElem, const [
+              'IrradianceDelayLow',
+              'IrradianceLowDelayPoints',
+              'IrradianceDelayPointsLow',
+            ]),
           );
           final link = sElem.getElement('BrightnessIrradianceLink')?.innerText;
           if (link != null && link.isNotEmpty) {
@@ -865,7 +852,8 @@ class _ConfigScreenState extends State<ConfigScreen> {
     if (!hasPrimaryModifier) {
       return false;
     }
-    final shiftPressed = pressed.contains(LogicalKeyboardKey.shiftLeft) ||
+    final shiftPressed =
+        pressed.contains(LogicalKeyboardKey.shiftLeft) ||
         pressed.contains(LogicalKeyboardKey.shiftRight);
     if (shiftPressed) {
       unawaited(_saveAsXml());
@@ -874,7 +862,6 @@ class _ConfigScreenState extends State<ConfigScreen> {
     }
     return true;
   }
-
 
   @override
   void initState() {
@@ -1033,10 +1020,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                     'BrightnessAddress',
                     nest: s.brightnessAddress,
                   );
-                  builder.element(
-                    'HeightAddress',
-                    nest: s.heightAddress,
-                  );
+                  builder.element('HeightAddress', nest: s.heightAddress);
                   builder.element(
                     'LouvreAngleAddress',
                     nest: s.louvreAngleAddress,
@@ -1318,7 +1302,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
           // Remember handle for future quick saves
           _webFileHandle = fileHandle;
           _lastSavedXmlSnapshot = xml;
-          setState(() { /* The file handle changed. */ });
+          setState(() {
+            /* The file handle changed. */
+          });
 
           return true;
         } catch (e) {
@@ -1340,7 +1326,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
         anchor.remove();
         html.Url.revokeObjectUrl(url);
         _lastSavedXmlSnapshot = xml;
-        setState(() { /* The file handle changed. */ });
+        setState(() {
+          /* The file handle changed. */
+        });
         return true;
       } catch (e) {
         if (mounted) {
@@ -1364,7 +1352,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
           await file.writeAsString(xml);
           _lastXmlPath = result; // remember for quick save
           _lastSavedXmlSnapshot = xml;
-          setState(() { /* The file handle changed. */ });
+          setState(() {
+            /* The file handle changed. */
+          });
           return true;
         } catch (e) {
           if (mounted) {
@@ -1405,7 +1395,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
             js_util.callMethod(writable, 'close', []),
           );
           _lastSavedXmlSnapshot = xmlString;
-          setState(() { /* The file handle changed. */ });
+          setState(() {
+            /* The file handle changed. */
+          });
           return true;
         } catch (e) {
           // If writing fails (e.g., permission revoked), forget handle and do Save As
@@ -1425,7 +1417,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
           final file = File(_lastXmlPath!);
           await file.writeAsString(xmlString);
           _lastSavedXmlSnapshot = xmlString;
-          setState(() { /* The file handle changed. */ });
+          setState(() {
+            /* The file handle changed. */
+          });
           return true;
         } catch (e) {
           if (mounted) {
@@ -1490,11 +1484,13 @@ class _ConfigScreenState extends State<ConfigScreen> {
       }
 
       if (editingSectorIndex == index) {
-        final fallbackIndex = index >= sectors.length ? sectors.length - 1 : index;
+        final fallbackIndex = index >= sectors.length
+            ? sectors.length - 1
+            : index;
         editingSectorIndex =
             fallbackIndex >= 0 && fallbackIndex < sectors.length
-                ? fallbackIndex
-                : null;
+            ? fallbackIndex
+            : null;
       } else if (editingSectorIndex! > index) {
         editingSectorIndex = editingSectorIndex! - 1;
       }
@@ -1550,7 +1546,10 @@ class _ConfigScreenState extends State<ConfigScreen> {
                               ? IconButton(
                                   icon: const Icon(Icons.copy),
                                   onPressed: () => setState(() {
-                                    _copiedSector = s;
+                                    _copiedSector = cloneSector(
+                                      s,
+                                      keepGuid: true,
+                                    );
                                   }),
                                 )
                               : null,
@@ -1589,51 +1588,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                       ? () {
                           setState(() => selectedPage = 'Sektoren');
                           setState(() {
-                            sectors.add(
-                              Sector()
-                                ..name = _copiedSector!.name
-                                ..orientation = _copiedSector!.orientation
-                                ..horizonLimit = _copiedSector!.horizonLimit
-                                ..horizonPoints = _copiedSector!.horizonPoints
-                                ..ceilingPoints = _copiedSector!.ceilingPoints
-                                ..louvreTracking = _copiedSector!.louvreTracking
-                                ..louvreSpacing = _copiedSector!.louvreSpacing
-                                ..louvreDepth = _copiedSector!.louvreDepth
-                                ..louvreAngleAtZero =
-                                    _copiedSector!.louvreAngleAtZero
-                                ..louvreAngleAtHundred =
-                                    _copiedSector!.louvreAngleAtHundred
-                                ..louvreMinimumChange =
-                                    _copiedSector!.louvreMinimumChange
-                                ..louvreBuffer = _copiedSector!.louvreBuffer
-                                ..brightnessAddress =
-                                    _copiedSector!.brightnessAddress
-                                ..brightnessDynamicDelay =
-                                    _copiedSector!.brightnessDynamicDelay
-                                ..irradianceAddress =
-                                    _copiedSector!.irradianceAddress
-                                ..irradianceDynamicDelay =
-                                    _copiedSector!.irradianceDynamicDelay
-                                ..brightnessHighDelayPoints =
-                                    _copiedSector!.brightnessHighDelayPoints
-                                        .map(cloneDelayPoint)
-                                        .toList()
-                                ..brightnessLowDelayPoints =
-                                    _copiedSector!.brightnessLowDelayPoints
-                                        .map(cloneDelayPoint)
-                                        .toList()
-                                ..irradianceHighDelayPoints =
-                                    _copiedSector!.irradianceHighDelayPoints
-                                        .map(cloneDelayPoint)
-                                        .toList()
-                                ..irradianceLowDelayPoints =
-                                    _copiedSector!.irradianceLowDelayPoints
-                                        .map(cloneDelayPoint)
-                                        .toList()
-                                ..facadeAddress = _copiedSector!.facadeAddress
-                                ..facadeStart = _copiedSector!.facadeStart
-                                ..facadeEnd = _copiedSector!.facadeEnd,
-                            );
+                            sectors.add(cloneSector(_copiedSector!));
                             editingSectorIndex = sectors.length - 1;
                             editingTimerIndex = null;
                           });
@@ -1807,8 +1762,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
       final List<Widget> stackChildren = [
         Positioned.fill(
           child: Offstage(
-            offstage:
-                editingSectorIndex != null || selectedPage != 'Allgemein',
+            offstage: editingSectorIndex != null || selectedPage != 'Allgemein',
             child: generalPage,
           ),
         ),
@@ -1865,9 +1819,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
 
       if (selectedPage == 'Zeitschaltuhren') {
         stackChildren.add(
-          Positioned.fill(
-            child: buildTimeProgramContent(isDesktopMode: true),
-          ),
+          Positioned.fill(child: buildTimeProgramContent(isDesktopMode: true)),
         );
       }
 
@@ -1875,10 +1827,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
         children: [
           navPane,
           Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              children: stackChildren,
-            ),
+            child: Stack(fit: StackFit.expand, children: stackChildren),
           ),
         ],
       );
@@ -1910,23 +1859,16 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   child: Text('Bitte einen Sektor auswählen'),
                 ),
               );
-        stackChildren.add(
-          Positioned.fill(child: sectorContent),
-        );
+        stackChildren.add(Positioned.fill(child: sectorContent));
       }
 
       if (selectedPage == 'Zeitschaltuhren') {
         stackChildren.add(
-          Positioned.fill(
-            child: buildTimeProgramContent(isDesktopMode: false),
-          ),
+          Positioned.fill(child: buildTimeProgramContent(isDesktopMode: false)),
         );
       }
 
-      bodyContent = Stack(
-        fit: StackFit.expand,
-        children: stackChildren,
-      );
+      bodyContent = Stack(fit: StackFit.expand, children: stackChildren);
     }
 
     final currentXmlSnapshot = toXml();
@@ -2002,276 +1944,225 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   ),
                 ],
               ),
-            drawer: isDesktop
-                ? null
-                : Drawer(
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        SizedBox(
-                          height: 80,
-                          child: DrawerHeader(
-                            margin: EdgeInsets.zero,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(color: Colors.blue),
-                            child: const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Navigation',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
+              drawer: isDesktop
+                  ? null
+                  : Drawer(
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        children: [
+                          SizedBox(
+                            height: 80,
+                            child: DrawerHeader(
+                              margin: EdgeInsets.zero,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(color: Colors.blue),
+                              child: const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Navigation',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          title: const Text('Allgemein'),
-                          selected:
-                              editingSectorIndex == null &&
-                              selectedPage == 'Allgemein',
-                          selectedTileColor: Colors.blue.shade100,
-                          onTap: () {
-                            Navigator.pop(context);
-                            setState(() {
-                              editingSectorIndex = null;
-                              selectedPage = 'Allgemein';
-                            });
-                          },
-                        ),
-                        ExpansionTile(
-                          title: const Text('Sektoren'),
-                          children: [
-                            ...sectors.asMap().entries.map((e) {
-                              final i = e.key;
-                              final s = e.value;
-                              return MouseRegion(
-                                onEnter: (_) =>
-                                    setState(() => _hoveredSectorIndex = i),
-                                onExit: (_) =>
-                                    setState(() => _hoveredSectorIndex = null),
-                                child: ListTile(
-                                  title: Text(
-                                    s.name.isEmpty ? 'Neuer Sektor' : s.name,
+                          ListTile(
+                            title: const Text('Allgemein'),
+                            selected:
+                                editingSectorIndex == null &&
+                                selectedPage == 'Allgemein',
+                            selectedTileColor: Colors.blue.shade100,
+                            onTap: () {
+                              Navigator.pop(context);
+                              setState(() {
+                                editingSectorIndex = null;
+                                selectedPage = 'Allgemein';
+                              });
+                            },
+                          ),
+                          ExpansionTile(
+                            title: const Text('Sektoren'),
+                            children: [
+                              ...sectors.asMap().entries.map((e) {
+                                final i = e.key;
+                                final s = e.value;
+                                return MouseRegion(
+                                  onEnter: (_) =>
+                                      setState(() => _hoveredSectorIndex = i),
+                                  onExit: (_) => setState(
+                                    () => _hoveredSectorIndex = null,
                                   ),
-                                  trailing: _hoveredSectorIndex == i
-                                      ? IconButton(
-                                          icon: const Icon(Icons.copy),
-                                          onPressed: () => setState(() {
-                                            _copiedSector = s;
-                                          }),
-                                        )
-                                      : null,
-                                  selected: editingSectorIndex == i,
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    setState(() => selectedPage = 'Sektoren');
-                                    setState(() {
-                                      editingSectorIndex = i;
-                                      editingTimerIndex = null;
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                            ListTile(
-                              leading: const Icon(Icons.add),
-                              title: const Text('Sektor hinzufügen'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                setState(() => selectedPage = 'Sektoren');
-                                setState(() {
-                                  sectors.add(Sector());
-                                  editingSectorIndex = sectors.length - 1;
-                                  editingTimerIndex = null;
-                                });
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.paste),
-                              title: const Text('Einfügen'),
-                              enabled: _copiedSector != null,
-                              onTap: _copiedSector != null
-                                  ? () {
+                                  child: ListTile(
+                                    title: Text(
+                                      s.name.isEmpty ? 'Neuer Sektor' : s.name,
+                                    ),
+                                    trailing: _hoveredSectorIndex == i
+                                        ? IconButton(
+                                            icon: const Icon(Icons.copy),
+                                            onPressed: () => setState(() {
+                                              _copiedSector = cloneSector(
+                                                s,
+                                                keepGuid: true,
+                                              );
+                                            }),
+                                          )
+                                        : null,
+                                    selected: editingSectorIndex == i,
+                                    onTap: () {
                                       Navigator.pop(context);
                                       setState(() => selectedPage = 'Sektoren');
                                       setState(() {
-                                        sectors.add(
-                                          Sector()
-                                            ..name = _copiedSector!.name
-                                            ..orientation =
-                                                _copiedSector!.orientation
-                                            ..horizonLimit =
-                                                _copiedSector!.horizonLimit
-                                            ..horizonPoints =
-                                                _copiedSector!.horizonPoints
-                                            ..ceilingPoints =
-                                                _copiedSector!.ceilingPoints
-                                            ..louvreTracking =
-                                                _copiedSector!.louvreTracking
-                                            ..louvreSpacing =
-                                                _copiedSector!.louvreSpacing
-                                            ..louvreDepth =
-                                                _copiedSector!.louvreDepth
-                                            ..louvreAngleAtZero =
-                                                _copiedSector!.louvreAngleAtZero
-                                            ..louvreAngleAtHundred =
-                                                _copiedSector!
-                                                    .louvreAngleAtHundred
-                                            ..louvreMinimumChange =
-                                                _copiedSector!
-                                                    .louvreMinimumChange
-                                            ..louvreBuffer =
-                                                _copiedSector!.louvreBuffer
-                                            ..brightnessAddress =
-                                                _copiedSector!.brightnessAddress
-                                            ..brightnessDynamicDelay =
-                                                _copiedSector!
-                                                    .brightnessDynamicDelay
-                                            ..irradianceAddress =
-                                                _copiedSector!.irradianceAddress
-                                            ..irradianceDynamicDelay =
-                                                _copiedSector!
-                                                    .irradianceDynamicDelay
-                                            ..brightnessHighDelayPoints =
-                                                _copiedSector!
-                                                    .brightnessHighDelayPoints
-                                                    .map(cloneDelayPoint)
-                                                    .toList()
-                                            ..brightnessLowDelayPoints =
-                                                _copiedSector!
-                                                    .brightnessLowDelayPoints
-                                                    .map(cloneDelayPoint)
-                                                    .toList()
-                                            ..irradianceHighDelayPoints =
-                                                _copiedSector!
-                                                    .irradianceHighDelayPoints
-                                                    .map(cloneDelayPoint)
-                                                    .toList()
-                                            ..irradianceLowDelayPoints =
-                                                _copiedSector!
-                                                    .irradianceLowDelayPoints
-                                                    .map(cloneDelayPoint)
-                                                    .toList()
-                                            ..facadeAddress =
-                                                _copiedSector!.facadeAddress
-                                            ..facadeStart =
-                                                _copiedSector!.facadeStart
-                                            ..facadeEnd =
-                                                _copiedSector!.facadeEnd,
-                                        );
-                                        editingSectorIndex = sectors.length - 1;
+                                        editingSectorIndex = i;
                                         editingTimerIndex = null;
                                       });
-                                    }
-                                  : null,
-                            ),
-                          ],
-                        ),
-                        ExpansionTile(
-                          title: const Text('Zeitschaltuhren'),
-                          children: [
-                            ...timePrograms.asMap().entries.map((e) {
-                              final i = e.key;
-                              final p = e.value;
-                              return MouseRegion(
-                                onEnter: (_) =>
-                                    setState(() => _hoveredProgramIndex = i),
-                                onExit: (_) =>
-                                    setState(() => _hoveredProgramIndex = null),
-                                child: ValueListenableBuilder<String>(
-                                  valueListenable: p.nameNotifier,
-                                  builder: (context, name, _) {
-                                    return ListTile(
-                                      title: Text(
-                                        name.isEmpty ? 'Neues Programm' : name,
-                                      ),
-                                      trailing: _hoveredProgramIndex == i
-                                          ? IconButton(
-                                              icon: const Icon(Icons.copy),
-                                              onPressed: () => setState(() {
-                                                _copiedProgram = p;
-                                              }),
-                                            )
-                                          : null,
-                                      selected:
-                                          editingTimerIndex == i &&
-                                          selectedPage == 'Zeitschaltuhren',
-                                      onTap: () {
+                                    },
+                                  ),
+                                );
+                              }),
+                              ListTile(
+                                leading: const Icon(Icons.add),
+                                title: const Text('Sektor hinzufügen'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  setState(() => selectedPage = 'Sektoren');
+                                  setState(() {
+                                    sectors.add(Sector());
+                                    editingSectorIndex = sectors.length - 1;
+                                    editingTimerIndex = null;
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.paste),
+                                title: const Text('Einfügen'),
+                                enabled: _copiedSector != null,
+                                onTap: _copiedSector != null
+                                    ? () {
+                                        Navigator.pop(context);
+                                        setState(
+                                          () => selectedPage = 'Sektoren',
+                                        );
+                                        setState(() {
+                                          sectors.add(
+                                            cloneSector(_copiedSector!),
+                                          );
+                                          editingSectorIndex =
+                                              sectors.length - 1;
+                                          editingTimerIndex = null;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                            ],
+                          ),
+                          ExpansionTile(
+                            title: const Text('Zeitschaltuhren'),
+                            children: [
+                              ...timePrograms.asMap().entries.map((e) {
+                                final i = e.key;
+                                final p = e.value;
+                                return MouseRegion(
+                                  onEnter: (_) =>
+                                      setState(() => _hoveredProgramIndex = i),
+                                  onExit: (_) => setState(
+                                    () => _hoveredProgramIndex = null,
+                                  ),
+                                  child: ValueListenableBuilder<String>(
+                                    valueListenable: p.nameNotifier,
+                                    builder: (context, name, _) {
+                                      return ListTile(
+                                        title: Text(
+                                          name.isEmpty
+                                              ? 'Neues Programm'
+                                              : name,
+                                        ),
+                                        trailing: _hoveredProgramIndex == i
+                                            ? IconButton(
+                                                icon: const Icon(Icons.copy),
+                                                onPressed: () => setState(() {
+                                                  _copiedProgram = p;
+                                                }),
+                                              )
+                                            : null,
+                                        selected:
+                                            editingTimerIndex == i &&
+                                            selectedPage == 'Zeitschaltuhren',
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          setState(
+                                            () => selectedPage =
+                                                'Zeitschaltuhren',
+                                          );
+                                          setState(() {
+                                            editingTimerIndex = i;
+                                            editingSectorIndex = null;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                              ListTile(
+                                leading: const Icon(Icons.add),
+                                title: const Text('Programm hinzufügen'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  setState(
+                                    () => selectedPage = 'Zeitschaltuhren',
+                                  );
+                                  setState(() {
+                                    timePrograms.add(TimeProgram());
+                                    editingTimerIndex = timePrograms.length - 1;
+                                    editingSectorIndex = null;
+                                  });
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.paste),
+                                title: const Text('Einfügen'),
+                                enabled: _copiedProgram != null,
+                                onTap: _copiedProgram != null
+                                    ? () {
                                         Navigator.pop(context);
                                         setState(
                                           () =>
                                               selectedPage = 'Zeitschaltuhren',
                                         );
                                         setState(() {
-                                          editingTimerIndex = i;
+                                          timePrograms.add(
+                                            TimeProgram()
+                                              ..name = _copiedProgram!.name
+                                              ..commands = _copiedProgram!
+                                                  .commands
+                                                  .map(
+                                                    (c) => TimeCommand(
+                                                      type: c.type,
+                                                      weekdaysMask:
+                                                          c.weekdaysMask,
+                                                      time: c.time,
+                                                      value: c.value,
+                                                      groupAddress:
+                                                          c.groupAddress,
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                          );
+                                          editingTimerIndex =
+                                              timePrograms.length - 1;
                                           editingSectorIndex = null;
                                         });
-                                      },
-                                    );
-                                  },
-                                ),
-                              );
-                            }),
-                            ListTile(
-                              leading: const Icon(Icons.add),
-                              title: const Text('Programm hinzufügen'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                setState(
-                                  () => selectedPage = 'Zeitschaltuhren',
-                                );
-                                setState(() {
-                                  timePrograms.add(TimeProgram());
-                                  editingTimerIndex = timePrograms.length - 1;
-                                  editingSectorIndex = null;
-                                });
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.paste),
-                              title: const Text('Einfügen'),
-                              enabled: _copiedProgram != null,
-                              onTap: _copiedProgram != null
-                                  ? () {
-                                      Navigator.pop(context);
-                                      setState(
-                                        () => selectedPage = 'Zeitschaltuhren',
-                                      );
-                                      setState(() {
-                                        timePrograms.add(
-                                          TimeProgram()
-                                            ..name = _copiedProgram!.name
-                                            ..commands = _copiedProgram!
-                                                .commands
-                                                .map(
-                                                  (c) => TimeCommand(
-                                                    type: c.type,
-                                                    weekdaysMask:
-                                                        c.weekdaysMask,
-                                                    time: c.time,
-                                                    value: c.value,
-                                                    groupAddress:
-                                                        c.groupAddress,
-                                                  ),
-                                                )
-                                                .toList(),
-                                        );
-                                        editingTimerIndex =
-                                            timePrograms.length - 1;
-                                        editingSectorIndex = null;
-                                      });
-                                    }
-                                  : null,
-                            ),
-                          ],
-                        ),
-                      ],
+                                      }
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
               body: bodyContent,
-
             ),
           ),
         ),

@@ -150,22 +150,18 @@ class Sector {
              ? ceilingPoints.map(clonePoint).toList()
              : <Point>[],
        ),
-       brightnessHighDelayPoints =
-           brightnessHighDelayPoints != null
-               ? brightnessHighDelayPoints.map(cloneDelayPoint).toList()
-               : <DelayPoint>[],
-       brightnessLowDelayPoints =
-           brightnessLowDelayPoints != null
-               ? brightnessLowDelayPoints.map(cloneDelayPoint).toList()
-               : <DelayPoint>[],
-       irradianceHighDelayPoints =
-           irradianceHighDelayPoints != null
-               ? irradianceHighDelayPoints.map(cloneDelayPoint).toList()
-               : <DelayPoint>[],
-       irradianceLowDelayPoints =
-           irradianceLowDelayPoints != null
-               ? irradianceLowDelayPoints.map(cloneDelayPoint).toList()
-               : <DelayPoint>[] {
+       brightnessHighDelayPoints = brightnessHighDelayPoints != null
+           ? brightnessHighDelayPoints.map(cloneDelayPoint).toList()
+           : <DelayPoint>[],
+       brightnessLowDelayPoints = brightnessLowDelayPoints != null
+           ? brightnessLowDelayPoints.map(cloneDelayPoint).toList()
+           : <DelayPoint>[],
+       irradianceHighDelayPoints = irradianceHighDelayPoints != null
+           ? irradianceHighDelayPoints.map(cloneDelayPoint).toList()
+           : <DelayPoint>[],
+       irradianceLowDelayPoints = irradianceLowDelayPoints != null
+           ? irradianceLowDelayPoints.map(cloneDelayPoint).toList()
+           : <DelayPoint>[] {
     nameNotifier = ValueNotifier<String>(name);
   }
 
@@ -196,10 +192,7 @@ class DelayPoint {
   double brightness;
   double seconds;
 
-  DelayPoint({
-    this.brightness = 0,
-    this.seconds = 0,
-  });
+  DelayPoint({this.brightness = 0, this.seconds = 0});
 }
 
 Point clonePoint(Point source) => Point(
@@ -209,10 +202,69 @@ Point clonePoint(Point source) => Point(
   isDefault: source.isDefault,
 );
 
-DelayPoint cloneDelayPoint(DelayPoint source) => DelayPoint(
-  brightness: source.brightness,
-  seconds: source.seconds,
-);
+DelayPoint cloneDelayPoint(DelayPoint source) =>
+    DelayPoint(brightness: source.brightness, seconds: source.seconds);
+
+LatLng cloneLatLng(LatLng source) => LatLng(source.latitude, source.longitude);
+
+Sector cloneSector(Sector source, {bool keepGuid = false}) {
+  final cloned = Sector(
+    guid: keepGuid ? source.guid : null,
+    id: source.id,
+    name: source.name,
+    orientation: source.orientation,
+    useBrightness: source.useBrightness,
+    useIrradiance: source.useIrradiance,
+    brightnessDynamicDelay: source.brightnessDynamicDelay,
+    irradianceDynamicDelay: source.irradianceDynamicDelay,
+    brightnessHighDelayPoints: source.brightnessHighDelayPoints
+        .map(cloneDelayPoint)
+        .toList(),
+    brightnessLowDelayPoints: source.brightnessLowDelayPoints
+        .map(cloneDelayPoint)
+        .toList(),
+    irradianceHighDelayPoints: source.irradianceHighDelayPoints
+        .map(cloneDelayPoint)
+        .toList(),
+    irradianceLowDelayPoints: source.irradianceLowDelayPoints
+        .map(cloneDelayPoint)
+        .toList(),
+    horizonLimit: source.horizonLimit,
+    horizonPoints: source.horizonPoints.map(clonePoint).toList(),
+    ceilingPoints: source.ceilingPoints.map(clonePoint).toList(),
+    louvreTracking: source.louvreTracking,
+    louvreSpacing: source.louvreSpacing,
+    louvreDepth: source.louvreDepth,
+    louvreAngleAtZero: source.louvreAngleAtZero,
+    louvreAngleAtHundred: source.louvreAngleAtHundred,
+    louvreMinimumChange: source.louvreMinimumChange,
+    louvreBuffer: source.louvreBuffer,
+    brightnessAddress: source.brightnessAddress,
+    heightAddress: source.heightAddress,
+    louvreAngleAddress: source.louvreAngleAddress,
+    sunBoolAddress: source.sunBoolAddress,
+    irradianceAddress: source.irradianceAddress,
+    brightnessIrradianceLink: source.brightnessIrradianceLink,
+    onAutoAddress: source.onAutoAddress,
+    onAutoBehavior: source.onAutoBehavior,
+    offAutoAddress: source.offAutoAddress,
+    offAutoBehavior: source.offAutoBehavior,
+    facadeAddress: source.facadeAddress,
+    facadeStart: source.facadeStart != null
+        ? cloneLatLng(source.facadeStart!)
+        : null,
+    facadeEnd: source.facadeEnd != null ? cloneLatLng(source.facadeEnd!) : null,
+  );
+  cloned.brightnessUpperThreshold = source.brightnessUpperThreshold;
+  cloned.brightnessUpperDelay = source.brightnessUpperDelay;
+  cloned.brightnessLowerThreshold = source.brightnessLowerThreshold;
+  cloned.brightnessLowerDelay = source.brightnessLowerDelay;
+  cloned.irradianceUpperThreshold = source.irradianceUpperThreshold;
+  cloned.irradianceUpperDelay = source.irradianceUpperDelay;
+  cloned.irradianceLowerThreshold = source.irradianceLowerThreshold;
+  cloned.irradianceLowerDelay = source.irradianceLowerDelay;
+  return cloned;
+}
 
 List<Point> ensureDefaultHorizonPoints(List<Point> points) =>
     _ensureLockedPoints(points, horizonLockedPointSpecs);
