@@ -1,0 +1,51 @@
+name: Update OSS Licenses
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-oss-licenses-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Generate and Commit OSS Licenses
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Generate OSS license file
+        run: dart run dart_pubspec_licenses:generate
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- lib/oss_licenses.dart; then
+            echo "No changes in lib/oss_licenses.dart"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lib/oss_licenses.dart
+          git commit -m "chore: update OSS licenses"
+          git push

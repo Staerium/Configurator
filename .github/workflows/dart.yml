@@ -90,6 +90,9 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Generate OSS license file
+        run: dart run dart_pubspec_licenses:generate
+
       # --- Builds ---
       # Web nur einmal auf Linux bauen (spart Zeit/Runner-Minuten)
       - name: Build Web (Linux x64 only)

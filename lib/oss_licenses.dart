@@ -14,6 +14,7 @@ const thisPackage = _configurator;
 const allDependencies = <Package>[
   __fe_analyzer_shared,
   _analyzer,
+  _archive,
   _args,
   _async,
   _boolean_selector,
@@ -48,6 +49,7 @@ const allDependencies = <Package>[
   _flutter_keyboard_visibility_platform_interface,
   _flutter_keyboard_visibility_web,
   _flutter_keyboard_visibility_windows,
+  _flutter_launcher_icons,
   _flutter_lints,
   _flutter_map,
   _flutter_plugin_android_lifecycle,
@@ -64,6 +66,7 @@ const allDependencies = <Package>[
   _http,
   _http_multi_server,
   _http_parser,
+  _image,
   _intl,
   _io,
   _js,
@@ -98,6 +101,7 @@ const allDependencies = <Package>[
   _plugin_platform_interface,
   _pointer_interceptor,
   _pool,
+  _posix,
   _proj4dart,
   _pub_semver,
   _pubspec_parse,
@@ -173,7 +177,8 @@ const dependencies = <Package>[
 
 /// Direct `dev_dependencies`.
 const devDependencies = <Package>[
-  _flutter_lints
+  _flutter_lints,
+  _flutter_launcher_icons
 ];
 
 /// Package license definition.
@@ -307,6 +312,42 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// archive 4.0.7
+const _archive = Package(
+    name: 'archive',
+    description: 'Provides encoders and decoders for various archive and compression formats such as zip, tar, bzip2, gzip, and zlib.',
+    repository: 'https://github.com/brendan-duncan/archive',
+    authors: [],
+    version: '4.0.7',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('crypto'), PackageRef('path'), PackageRef('posix')],
+    devDependencies: [PackageRef('http'), PackageRef('lints'), PackageRef('test'), PackageRef('web')],
+    license: '''The MIT License
+
+Copyright (c) 2013-2021 Brendan Duncan.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.''',
   );
 
 /// args 2.7.0
@@ -1996,6 +2037,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.''',
   );
 
+/// flutter_launcher_icons 0.14.4
+const _flutter_launcher_icons = Package(
+    name: 'flutter_launcher_icons',
+    description: "A package which simplifies the task of updating your Flutter app's launcher icon.",
+    homepage: 'https://github.com/fluttercommunity/flutter_launcher_icons',
+    repository: 'https://github.com/fluttercommunity/flutter_launcher_icons/',
+    authors: [],
+    version: '0.14.4',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('args'), PackageRef('checked_yaml'), PackageRef('cli_util'), PackageRef('image'), PackageRef('json_annotation'), PackageRef('path'), PackageRef('yaml')],
+    devDependencies: [PackageRef('test')],
+    license: '''MIT License
+
+Copyright (c) 2019 Mark O'Sullivan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+  );
+
 /// flutter_lints 5.0.0
 const _flutter_lints = Package(
     name: 'flutter_lints',
@@ -2583,6 +2660,42 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// image 4.5.4
+const _image = Package(
+    name: 'image',
+    description: 'Dart Image Library provides server and web apps the ability to load, manipulate, and save images with various image file formats.',
+    homepage: 'https://github.com/brendan-duncan/image',
+    authors: [],
+    version: '4.5.4',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('archive'), PackageRef('meta'), PackageRef('xml')],
+    devDependencies: [PackageRef('http'), PackageRef('lints'), PackageRef('test'), PackageRef('web')],
+    license: '''The MIT License
+
+Copyright (c) 2013-2022 Brendan Duncan.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.''',
   );
 
 /// intl 0.20.2
@@ -4121,6 +4234,41 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+  );
+
+/// posix 6.0.3
+const _posix = Package(
+    name: 'posix',
+    description: 'Exposes the POSIX api on OSx and Linux',
+    homepage: 'https://github.com/onepub-dev/dart_posix',
+    authors: [],
+    version: '6.0.3',
+    spdxIdentifiers: ['MIT'],
+    isMarkdown: false,
+    isSdk: false,
+    dependencies: [PackageRef('ffi'), PackageRef('meta'), PackageRef('path')],
+    devDependencies: [PackageRef('logger'), PackageRef('logging'), PackageRef('stack_trace'), PackageRef('test'), PackageRef('uuid')],
+    license: '''MIT License
+
+Copyright (c) 2020 Brett Sutton
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
   );
 
 /// proj4dart 2.1.0
@@ -7051,16 +7199,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.''',
   );
 
-/// configurator 1.0.0+1
+/// configurator 1.1.0+1
 const _configurator = Package(
     name: 'configurator',
     description: 'A new Flutter project.',
     authors: [],
-    version: '1.0.0+1',
+    version: '1.1.0+1',
     spdxIdentifiers: [],
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('flutter'), PackageRef('file_picker'), PackageRef('uuid'), PackageRef('geocoding'), PackageRef('flutter_map'), PackageRef('latlong2'), PackageRef('flutter_typeahead'), PackageRef('http'), PackageRef('fl_chart'), PackageRef('solar_calculator'), PackageRef('flutter_svg'), PackageRef('url_launcher'), PackageRef('xml'), PackageRef('file_system_access_api'), PackageRef('universal_html'), PackageRef('dart_pubspec_licenses'), PackageRef('cupertino_icons')],
-    devDependencies: [PackageRef('flutter_lints')],
+    devDependencies: [PackageRef('flutter_lints'), PackageRef('flutter_launcher_icons')],
   );
 
