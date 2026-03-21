@@ -329,6 +329,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
     setState(() {
       _latController.text = root.getElement('Latitude')?.innerText ?? '';
       _lngController.text = root.getElement('Longitude')?.innerText ?? '';
+      // Keep calculation coordinates in sync with loaded project values.
+      latitude = parseDouble(_latController.text) ?? 0;
+      longitude = parseDouble(_lngController.text) ?? 0;
       azElOption = root.getElement('AzElOption')?.innerText ?? 'Internet';
       timeAddress = root.getElement('TimeAddress')?.innerText ?? '';
       dateAddress = root.getElement('DateAddress')?.innerText ?? '';
